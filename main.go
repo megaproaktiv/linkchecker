@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
-	"github.com/antchfx/xmlquery"
-    "github.com/fatih/color"
 	"github.com/alecthomas/kong"
-
+	"github.com/antchfx/xmlquery"
+	"github.com/fatih/color"
 )
 
 var CLI struct {
@@ -44,43 +44,42 @@ func main() {
 	var presentation *zip.File
 	for _, file := range pptx.File {
 		// if file.Name == "ppt/presentation.xml" {
-		if file.Name == "ppt/slides/_rels/slide2.xml.rels" {
+		// if strings.HasPrefix(file.Name, == "ppt/slides/_rels/slide2.xml.rels" {
+		if strings.HasPrefix(file.Name, "ppt/slides/_rels/slide") {
+			parts := strings.Split(file.Name, "/")
+			slideParts := strings.Split(parts[3], ".")
+			slide := slideParts[0]
 			presentation = file
-			break
+				// Read the XML data from the presentation.xml file
+			xmlData, err := presentation.Open()
+			if err != nil {
+				panic(err)
+			}
+			defer xmlData.Close()
+
+			doc, err := xmlquery.Parse(xmlData)
+			if err != nil {
+				panic(err)
+			}
+			// Find all Relationship elements using XPath
+			elements := xmlquery.Find(doc, "//Relationship")
+			// Filter the Relationship elements to only include those with https targets
+			for _, element := range elements {
+				target := element.SelectAttr("Target")
+				if target != "" && startsWithHTTPS(target) {
+					// fmt.Printf("Found https target: %s in slide %v\n", target,slide)
+					if webIsReachable(target) {
+						color.Green("☑️ Target %v is reachable in slide: %v \n", target, slide)
+					} else {
+						color.Red("❌ Target %v is not reachable in slide: %v \n", target, slide)
+					}
+				}
+			}
 		}
 	}
 	if presentation == nil {
-		panic("presentation.xml not found in PowerPoint file")
+		panic("No slides not found in PowerPoint file")
 	}
-
-	// Read the XML data from the presentation.xml file
-	xmlData, err := presentation.Open()
-	if err != nil {
-		panic(err)
-	}
-	defer xmlData.Close()
-
-    doc, err := xmlquery.Parse(xmlData)
-	if err != nil {
-		panic(err)
-	}
-    
-
-	// Find all Relationship elements using XPath
-    elements := xmlquery.Find(doc, "//Relationship")
-
-    // Filter the Relationship elements to only include those with https targets
-    for _, element := range elements {
-        target := element.SelectAttr("Target")
-        if target != "" && startsWithHTTPS(target) {
-            fmt.Printf("Found https target: %s\n", target)
-            if webIsReachable(target) {
-                color.Green("☑️ Target is reachable")
-            } else {
-                color.Red("❌ Target is not reachable")
-            }
-        }
-    }
 
 }
 
