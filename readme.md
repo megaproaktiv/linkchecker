@@ -20,6 +20,12 @@ linkchecker check filename.pptx
 
 ## Changelog
 
+## 0.1.4
+
+### Added
+
+- Response 302 is ok
+
 ## 0.1.3
 
 ### Fixed

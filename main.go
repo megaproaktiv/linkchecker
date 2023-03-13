@@ -109,5 +109,9 @@ func webIsReachable(web string, internal bool) bool {
         return true
     }
 
+    if response.StatusCode == 302 {
+        return true
+    }
+
     return false
 }
