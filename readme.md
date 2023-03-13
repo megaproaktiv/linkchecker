@@ -20,6 +20,12 @@ linkchecker check filename.pptx
 
 ## Changelog
 
+## 0.1.3
+
+### Fixed
+
+- false if internal error response
+
 ## 0.1.2
 
 ### Added
