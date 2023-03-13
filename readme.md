@@ -17,3 +17,11 @@ linkchecker check filename.pptx
 ❌ Target https://www.john-doe.com/ is not reachable in slide: slide2
 ☑️ Target https://www.google.de/ is reachable in slide: slide2
 ```
+
+## Changelog
+
+## 0.1.2
+
+### Added
+
+- Flag "--internal" disabled google.com internal reachability check, which might be not functional inside the corporate network without proxy

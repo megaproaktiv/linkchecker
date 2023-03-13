@@ -1,0 +1,16 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  itest:
+    cmds:
+      - echo "Call check only"
+      - go run main.go check testdata/someuris.pptx
+      - echo "Call with internal flag"
+      - go run main.go check --internal testdata/someuris.pptx
+
+    silent: true

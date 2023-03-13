@@ -1,3 +1,6 @@
 dist
 testdata/~$someuris.pptx
 .DS_Store
+.vscode/settings.json
+
+dist/
